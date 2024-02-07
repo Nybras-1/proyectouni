@@ -4,6 +4,8 @@ volumes:
   orderer.universidades.com:
   peer0.ENEB.universidades.com:
   peer0.IEBS.universidades.com:
+  couchdb0:
+  couchdb1:
 
 networks:
   test:
@@ -41,10 +43,10 @@ services:
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: orderer
     volumes:
-        - ../system-genesis-block/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
-        - ../organizations/ordererOrganizations/universidades.com/orderers/orderer.universidades.com/msp:/var/hyperledger/orderer/msp
-        - ../organizations/ordererOrganizations/universidades.com/orderers/orderer.universidades.com/tls/:/var/hyperledger/orderer/tls
-        - orderer.universidades.com:/var/hyperledger/production/orderer
+      - ../system-genesis-block/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+      - ../organizations/ordererOrganizations/universidades.com/orderers/orderer.universidades.com/msp:/var/hyperledger/orderer/msp
+      - ../organizations/ordererOrganizations/universidades.com/orderers/orderer.universidades.com/tls/:/var/hyperledger/orderer/tls
+      - orderer.universidades.com:/var/hyperledger/production/orderer
     ports:
       - 7050:7050
       - 7053:7053
@@ -62,6 +64,8 @@ services:
       - COUCHDB_PASSWORD=adminpw
     ports:
       - "5984:5984"
+    volumes:
+      - couchdb0:/opt/couchdb/data
     networks:
       - test
 
@@ -93,10 +97,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=adminpw
     volumes:
-        - /var/run/docker.sock:/host/var/run/docker.sock
-        - ../organizations/peerOrganizations/ENEB.universidades.com/peers/peer0.ENEB.universidades.com/msp:/etc/hyperledger/fabric/msp
-        - ../organizations/peerOrganizations/ENEB.universidades.com/peers/peer0.ENEB.universidades.com/tls:/etc/hyperledger/fabric/tls
-        - peer0.ENEB.universidades.com:/var/hyperledger/production
+      - /var/run/docker.sock:/host/var/run/docker.sock
+      - ../organizations/peerOrganizations/ENEB.universidades.com/peers/peer0.ENEB.universidades.com/msp:/etc/hyperledger/fabric/msp
+      - ../organizations/peerOrganizations/ENEB.universidades.com/peers/peer0.ENEB.universidades.com/tls:/etc/hyperledger/fabric/tls
+      - peer0.ENEB.universidades.com:/var/hyperledger/production
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: peer node start
     ports:
@@ -117,6 +121,8 @@ services:
       - COUCHDB_PASSWORD=adminpw
     ports:
       - "7984:5984"
+    volumes:
+      - couchdb1:/opt/couchdb/data
     networks:
       - test
 
@@ -148,10 +154,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=adminpw
     volumes:
-        - /var/run/docker.sock:/host/var/run/docker.sock
-        - ../organizations/peerOrganizations/IEBS.universidades.com/peers/peer0.IEBS.universidades.com/msp:/etc/hyperledger/fabric/msp
-        - ../organizations/peerOrganizations/IEBS.universidades.com/peers/peer0.IEBS.universidades.com/tls:/etc/hyperledger/fabric/tls
-        - peer0.IEBS.universidades.com:/var/hyperledger/production
+      - /var/run/docker.sock:/host/var/run/docker.sock
+      - ../organizations/peerOrganizations/IEBS.universidades.com/peers/peer0.IEBS.universidades.com/msp:/etc/hyperledger/fabric/msp
+      - ../organizations/peerOrganizations/IEBS.universidades.com/peers/peer0.IEBS.universidades.com/tls:/etc/hyperledger/fabric/tls
+      - peer0.IEBS.universidades.com:/var/hyperledger/production
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: peer node start
     ports:
@@ -176,7 +182,7 @@ services:
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: /bin/bash
     volumes:
-        - ../organizations:/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations
+      - ../organizations:/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations
     depends_on:
       - peer0.ENEB.universidades.com
       - peer0.IEBS.universidades.com
